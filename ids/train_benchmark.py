@@ -170,8 +170,10 @@ def save_class_distribution_plot(df, output_dir):
     print(f'[2/5] Saved class distribution plot: {out_path}')
 
 
-def train_pycaret(df):
+def train_pycaret(df, fix_imbalance=True):
     """Set up PyCaret experiment and run compare_models."""
+    if not fix_imbalance:
+        print('[3/5] NOTE: SMOTE disabled (smoke-test mode — too few samples per class)')
     print('[3/5] Setting up PyCaret experiment ...')
     exp = ClassificationExperiment()
     exp.setup(
@@ -185,7 +187,7 @@ def train_pycaret(df):
         numeric_imputation   = 'mean',
         normalize            = True,
         normalize_method     = 'zscore',
-        fix_imbalance        = True,   # SMOTE — addresses class imbalance
+        fix_imbalance        = fix_imbalance,
         fold_strategy        = 'stratifiedkfold',
         fold                 = 5,
         fold_shuffle         = True,
@@ -291,8 +293,8 @@ def main():
     print_class_distribution(df)
     save_class_distribution_plot(df, output_dir)
 
-    # 3. Train with PyCaret
-    exp, best_model = train_pycaret(df)
+    # 3. Train with PyCaret (disable SMOTE in smoke-test mode — too few samples)
+    exp, best_model = train_pycaret(df, fix_imbalance=(args.max_rows is None))
 
     # 4. Evaluate
     evaluate_model(exp, best_model, output_dir)
