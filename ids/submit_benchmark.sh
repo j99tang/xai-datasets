@@ -9,8 +9,8 @@
 #SBATCH --job-name=iec104-benchmark
 #SBATCH --output=/scratch/j99tang/logs/benchmark_%j.log   # %j = job ID
 #SBATCH --time=06:00:00       # 6-hour wall-clock limit
-#SBATCH --mem=32G             # memory (dataset + SMOTE + multiple models)
-#SBATCH --cpus-per-task=8     # ExtraTrees/PyCaret use parallel cores
+#SBATCH --partition=compute
+#SBATCH --gpus-per-node=1
 #SBATCH --nodes=1
 
 # ── Create output directories if they don't exist ────────────────────────
@@ -20,6 +20,7 @@ mkdir -p /scratch/j99tang/logs
 # ── Load Python module ────────────────────────────────────────────────────
 # Check available versions with:  module spider python
 module load python/3.11
+module load gcc arrow/17.0.0 
 
 # ── Activate your virtual environment ────────────────────────────────────
 source ~/envs/xai-env/bin/activate

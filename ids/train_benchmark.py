@@ -108,8 +108,20 @@ def load_data(iec104_dir, headers_file, max_rows=None):
     df = pd.concat(frames, ignore_index=True)
 
     if max_rows is not None:
-        df = df.sample(n=min(max_rows, len(df)), random_state=123).reset_index(drop=True)
-        print(f'[1/5] Smoke-test mode: sampled {len(df):,} rows')
+        # Stratified sample — guarantee at least 2 rows per class so PyCaret's
+        # train/test split doesn't fail on rare classes (e.g. mitmattack has 26 rows total)
+        min_per_class = 2
+        guaranteed = df.groupby('Label').apply(
+            lambda g: g.sample(n=min(min_per_class, len(g)), random_state=123)
+        ).reset_index(drop=True)
+        remaining = df.drop(guaranteed.index, errors='ignore')
+        n_extra = max(0, min(max_rows, len(df)) - len(guaranteed))
+        if n_extra > 0:
+            extra = remaining.sample(n=min(n_extra, len(remaining)), random_state=123)
+            df = pd.concat([guaranteed, extra], ignore_index=True)
+        else:
+            df = guaranteed.reset_index(drop=True)
+        print(f'[1/5] Smoke-test mode: sampled {len(df):,} rows (≥{min_per_class} per class)')
 
     print(f'[1/5] Total rows loaded: {len(df):,}')
     return df, cols
