@@ -1,7 +1,7 @@
 #!/bin/bash
 # ============================================================
 # SLURM job script — IEC104 Benchmark Training
-# Submit with:  sbatch ~/xai-datasets/ids/submit_benchmark.sh
+# Submit with:  sbatch /scratch/j99tang/xai-datasets/ids/submit_benchmark.sh
 # Monitor with: squeue -u j99tang
 #               tail -f /scratch/j99tang/logs/benchmark_JOBID.log
 # ============================================================
@@ -23,7 +23,7 @@ module load python/3.11
 module load gcc arrow/17.0.0 
 
 # ── Activate your virtual environment ────────────────────────────────────
-source ~/envs/xai-env/bin/activate
+source /scratch/j99tang/envs/xai-env/bin/activate
 
 # ── Print environment info (useful for debugging) ────────────────────────
 echo "Job started at: $(date)"
@@ -33,7 +33,7 @@ echo "Python version: $(python --version)"
 echo ""
 
 # ── Run the training script ───────────────────────────────────────────────
-python ~/xai-datasets/ids/train_benchmark.py \
+python /scratch/j99tang/xai-datasets/ids/train_benchmark.py \
     --data-dir  /scratch/j99tang/data/raw/iec104/iec104 \
     --output-dir /scratch/j99tang/results
 
