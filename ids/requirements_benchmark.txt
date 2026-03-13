@@ -1,0 +1,11 @@
+# Requirements for IEC104 benchmark training script
+# Install with: pip install -r requirements_benchmark.txt
+
+pycaret==3.3.2
+scikit-learn
+pandas
+numpy
+matplotlib
+seaborn
+mlflow
+xgboost
